@@ -23,20 +23,12 @@ set -ouex pipefail
 
 # systemctl enable podman.socket
 
-wget -O /etc/yum.repos.d/linux-surface.repo https://pkg.surfacelinux.com/fedora/linux-surface.repo
+for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra; do
+    rpm --erase $pkg --nodeps
+done
 
-https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm
-
-rpm-ostree override replace ./*.rpm \
-	--remove kernel-core \
-	--remove kernel-modules \
-	--remove kernel-modules-extra \
-        --remove libwacom \
-        --remove libwacom-data \
-	--install kernel-surface \
-	--install iptsd \
-        --install libwacom-surface \
-        --install libwacom-surface-data
+wget -O /etc/yum.repos.d/linux-surface.repo \
+        https://pkg.surfacelinux.com/fedora/linux-surface.repo
 
 SURFACE_PACKAGES=(
     libcamera
@@ -47,3 +39,12 @@ SURFACE_PACKAGES=(
 )
 
 dnf5 install --assumeyes --skip-unavailable "${SURFACE_PACKAGES[@]}"
+
+KERNEL_SUFFIX=""
+
+QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' \ 
+| sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
+
+/usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
+
+chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
