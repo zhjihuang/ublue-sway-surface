@@ -42,26 +42,6 @@ dnf5 --setopt=disable_excludes=* --assumeyes install \
 
 dnf5 versionlock add kernel kernel-devel kernel-devel-matched kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
-wget -O /etc/yum.repos.d/linux-surface.repo \
-        https://pkg.surfacelinux.com/fedora/linux-surface.repo
-
-SURFACE_PACKAGES=(
-    iptsd
-    libcamera
-    libcamera-tools
-    libcamera-gstreamer
-    libcamera-ipa
-    pipewire-plugin-libcamera
-)
-
-dnf5 install --assumeyes --skip-unavailable "${SURFACE_PACKAGES[@]}"
-
-dnf5 --assumeyes swap \
-    libwacom-data libwacom-surface-data
-
-dnf5 --assumeyes swap \
-    libwacom libwacom-surface
-
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
 # Only on AMD models
 pinctrl_amd
@@ -100,5 +80,101 @@ EOF
 KERNEL_SUFFIX=""
 
 QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
+
 /usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
+
 chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
+
+GENERAL_PACKAGES=(
+    alsa-firmware
+    android-udev-rules
+    apr
+    apr-util
+    distrobox
+    fdk-aac
+    ffmpeg
+    ffmpeg-libs
+    ffmpegthumbnailer
+    flatpak-spawn
+    fuse
+    fzf
+    grub2-tools-extra
+    google-noto-sans-balinese-fonts
+    google-noto-sans-cjk-fonts
+    google-noto-sans-javanese-fonts
+    google-noto-sans-sundanese-fonts
+    heif-pixbuf-loader
+    htop
+    intel-vaapi-driver
+    just
+    libavcodec
+    libcamera
+    libcamera-tools
+    libcamera-gstreamer
+    libcamera-ipa
+    libfdk-aac
+    libheif
+    libimobiledevice-utils
+    libratbag-ratbagd
+    libva-utils
+    lshw
+    mesa-libxatracker
+    net-tools
+    nvme-cli
+    nvtop
+    openrgb-udev-rules
+    openssl
+    oversteer-udev
+    pam-u2f
+    pam_yubico
+    pamu2fcfg
+    pipewire-libs-extra
+    pipewire-plugin-libcamera
+    powerstat
+    smartmontools
+    solaar-udev
+    squashfs-tools
+    symlinks
+    tcpdump
+    tmux
+    traceroute
+    usbmuxd
+    vim
+    wireguard-tools
+    wl-clipboard
+    xhost
+    xorg-x11-xauth
+    yubikey-manager
+    zstd
+)
+
+SWAY_PACKAGES=(
+    clipman
+    gvfs-mtp
+    thunar-volman
+    tumbler
+)
+
+wget -O /etc/yum.repos.d/linux-surface.repo \
+        https://pkg.surfacelinux.com/fedora/linux-surface.repo
+
+SURFACE_PACKAGES=(
+    iptsd
+    libcamera
+    libcamera-tools
+    libcamera-gstreamer
+    libcamera-ipa
+    pipewire-plugin-libcamera
+)
+
+dnf5 install --assumeyes --skip-unavailable "${GENERAL_PACKAGES[@]} \
+                                             ${SWAY_PACKAGES[@]}\
+                                             ${SURFACE_PACKAGES[@]}"
+
+dnf5 --assumeyes swap \
+    libwacom-data libwacom-surface-data
+
+dnf5 --assumeyes swap \
+    libwacom libwacom-surface
+
+dnf5 clean all
