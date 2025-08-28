@@ -37,10 +37,10 @@ SURFACE_PACKAGES=(
 
 dnf5 install --assumeyes --skip-unavailable "${SURFACE_PACKAGES[@]}"
 
-dnf5 -assumeyes swap \
+dnf5 --assumeyes swap \
     libwacom-data libwacom-surface-data
 
-dnf5 -assumeyes swap \
+dnf5 --assumeyes swap \
     libwacom libwacom-surface
 
 KERNEL_SUFFIX=""
