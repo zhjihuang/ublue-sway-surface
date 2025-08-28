@@ -23,14 +23,11 @@ set -ouex pipefail
 
 # systemctl enable podman.socket
 
-for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra; do
-    rpm --erase $pkg --nodeps
-done
-
 wget -O /etc/yum.repos.d/linux-surface.repo \
         https://pkg.surfacelinux.com/fedora/linux-surface.repo
 
 SURFACE_PACKAGES=(
+    iptsd
     libcamera
     libcamera-tools
     libcamera-gstreamer
@@ -40,10 +37,14 @@ SURFACE_PACKAGES=(
 
 dnf5 install --assumeyes --skip-unavailable "${SURFACE_PACKAGES[@]}"
 
+dnf5 -assumeyes swap \
+    libwacom-data libwacom-surface-data
+
+dnf5 -assumeyes swap \
+    libwacom libwacom-surface
+
 KERNEL_SUFFIX=""
 
 QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
-
 /usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
-
 chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
