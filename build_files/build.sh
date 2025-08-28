@@ -23,9 +23,20 @@ set -ouex pipefail
 
 # systemctl enable podman.socket
 
-dnf5 config-manager addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/linux-surface.repo
+sudo wget -O /etc/yum.repos.d/linux-surface.repo https://pkg.surfacelinux.com/fedora/linux-surface.repo
 
-dnf5 install --assumeyes --allowerasing kernel-surface iptsd libwacom-surface
+wget https://github.com/linux-surface/linux-surface/releases/download/silverblue-20201215-1/kernel-20201215-1.x86_64.rpm
+
+rpm-ostree override replace ./*.rpm \
+	--remove kernel-core \
+	--remove kernel-modules \
+	--remove kernel-modules-extra \
+        --remove libwacom \
+        --remove libwacom-data \
+	--install kernel-surface \
+	--install iptsd \
+        --install libwacom-surface \
+        --install libwacom-surface-data
 
 SURFACE_PACKAGES=(
     libcamera
