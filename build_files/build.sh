@@ -42,8 +42,7 @@ dnf5 install --assumeyes --skip-unavailable "${SURFACE_PACKAGES[@]}"
 
 KERNEL_SUFFIX=""
 
-QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' \ 
-| sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
+QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
 
 /usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
 
