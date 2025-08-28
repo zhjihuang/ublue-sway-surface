@@ -23,8 +23,14 @@ set -ouex pipefail
 
 # systemctl enable podman.socket
 
+for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra; do
+    rpm --erase $pkg --nodeps
+done
+
 wget -O /etc/yum.repos.d/linux-surface.repo \
         https://pkg.surfacelinux.com/fedora/linux-surface.repo
+
+dnf5 install --assumeyes kernel-surface
 
 SURFACE_PACKAGES=(
     iptsd
