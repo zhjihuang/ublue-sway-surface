@@ -10,7 +10,7 @@ set -ouex pipefail
 # https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/39/x86_64/repoview/index.html&protocol=https&redirect=1
 
 # this installs a package from fedora repos
-dnf5 install -y tmux 
+# dnf5 install -y tmux 
 
 # Use a COPR Example:
 #
@@ -21,4 +21,18 @@ dnf5 install -y tmux
 
 #### Example for enabling a System Unit File
 
-systemctl enable podman.socket
+# systemctl enable podman.socket
+
+dnf5 config-manager addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/linux-surface.repo
+
+dnf5 install --assumeyes --allowerasing kernel-surface iptsd libwacom-surface
+
+SURFACE_PACKAGES=(
+    libcamera
+    libcamera-tools
+    libcamera-gstreamer
+    libcamera-ipa
+    pipewire-plugin-libcamera
+)
+
+dnf5 install --assumeyes --skip-unavailable "${SURFACE_PACKAGES[@]}"
