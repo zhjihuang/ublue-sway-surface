@@ -23,67 +23,21 @@ set -ouex pipefail
 
 # systemctl enable podman.socket
 
-for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra; do
-    rpm --erase $pkg --nodeps
-done
+# remove kernel locks
+dnf5 versionlock delete kernel{,-core,-modules,-modules-core,-modules-extra,-tools,-tools-lib,-headers,-devel,-devel-matched}
 
-skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods:main-"$(rpm -E %fedora)" dir:/tmp/akmods
-AKMODS_TARGZ=$(jq -r '.layers[].digest' </tmp/akmods/manifest.json | cut -d : -f 2)
-tar -xvzf /tmp/akmods/"$AKMODS_TARGZ" -C /tmp/
-mv /tmp/rpms/* /tmp/akmods/
+# Add the Surface Linux repo
+dnf5 config-manager \
+    addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/linux-surface.repo
 
-cat /etc/dnf/dnf.conf
-cat /etc/yum.repos.d/*
+# Install the Surface Linux kernel and related packages
+dnf5 -y install --allowerasing kernel-surface iptsd libwacom-surface kernel-surface-devel surface-secureboot surface-control
 
-dnf5 --setopt=disable_excludes=* --assumeyes install \
-    /tmp/kernel-rpms/kernel-[0-9]*.rpm \
-    /tmp/kernel-rpms/kernel-core-*.rpm \
-    /tmp/kernel-rpms/kernel-modules-*.rpm
+# Remove the default Fedora kernel and related packages
+dnf5 -y remove kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
-dnf5 versionlock add kernel kernel-devel kernel-devel-matched kernel-core kernel-modules kernel-modules-core kernel-modules-extra
-
-tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
-# Only on AMD models
-pinctrl_amd
-
-# Surface Book 2
-pinctrl_sunrisepoint
-
-# For Surface Laptop 3/Surface Book 3
-pinctrl_icelake
-
-# For Surface Laptop 4/Surface Laptop Studio
-pinctrl_tigerlake
-
-# For Surface Pro 9/Surface Laptop 5
-pinctrl_alderlake
-
-# For Surface Pro 10/Surface Laptop 6
-pinctrl_meteorlake
-
-# Only on Intel models
-intel_lpss
-intel_lpss_pci
-
-# Add modules necessary for Disk Encryption via keyboard
-surface_aggregator
-surface_aggregator_registry
-surface_aggregator_hub
-surface_hid_core
-8250_dw
-
-# Surface Laptop 3/Surface Book 3 and later
-surface_hid
-surface_kbd
-EOF
-
-KERNEL_SUFFIX=""
-
-QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
-
-/usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
-
-chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
+# Prevent kernel stuff from upgrading again
+dnf5 versionlock add kernel{,-core,-modules,-modules-core,-modules-extra,-tools,-tools-lib,-headers,-devel,-devel-matched}
 
 GENERAL_PACKAGES=(
     alsa-firmware
