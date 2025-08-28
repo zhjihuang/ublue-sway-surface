@@ -109,9 +109,6 @@ SWAY_PACKAGES=(
     tumbler
 )
 
-wget -O /etc/yum.repos.d/linux-surface.repo \
-        https://pkg.surfacelinux.com/fedora/linux-surface.repo
-
 SURFACE_PACKAGES=(
     iptsd
     libcamera
@@ -124,11 +121,5 @@ SURFACE_PACKAGES=(
 dnf5 install --assumeyes --skip-unavailable "${GENERAL_PACKAGES[@]} \
                                              ${SWAY_PACKAGES[@]} \
                                              ${SURFACE_PACKAGES[@]}"
-
-dnf5 --assumeyes swap \
-    libwacom-data libwacom-surface-data
-
-dnf5 --assumeyes swap \
-    libwacom libwacom-surface
 
 dnf5 clean all
