@@ -88,6 +88,20 @@ tee /etc/containers/policy.json << EOF
   ],
   "transports": {
     "docker": {
+      "registry.access.redhat.com": [
+        {
+          "type": "signedBy",
+          "keyType": "GPGKeys",
+          "keyPath": "/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release"
+        }
+      ],
+      "registry.redhat.io": [
+        {
+          "type": "signedBy",
+          "keyType": "GPGKeys",
+          "keyPath": "/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release"
+        }
+      ],
       "ghcr.io/zhjihuang": [
         {
           "type": "sigstoreSigned",
