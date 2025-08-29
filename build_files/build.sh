@@ -79,6 +79,47 @@ chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
 # Prevent kernel stuff from upgrading again
 dnf5 versionlock add kernel{,-core,-modules,-modules-core,-modules-extra,-tools,-tools-lib,-headers,-devel,-devel-matched}
 
+tee /etc/containers/policy.json < EOF
+{
+  "default": [
+    {
+      "type": "insecureAcceptAnything"
+    }
+  ],
+  "transports": {
+    "docker": {
+      "ghcr.io/zhjihuang": [
+        {
+          "type": "sigstoreSigned",
+          "keyPath": "/etc/pki/containers/zhjihuang.pub",
+          "signedIdentity": {
+            "type": "matchRepository"
+          }
+        }
+      ],
+      "": [
+        {
+          "type": "insecureAcceptAnything"
+        }
+      ]
+    },
+    "docker-daemon": {
+      "": [
+        {
+          "type": "insecureAcceptAnything"
+        }
+      ]
+    }
+  }
+}
+EOF
+
+tee /etc/containers/registries.d/zhjihuang.yaml < EOF
+docker:
+    ghcr.io/zhjihuang:
+        use-sigstore-attachments: true
+EOF
+
 GENERAL_PACKAGES=(
     alsa-firmware
     android-udev-rules
