@@ -71,11 +71,7 @@ surface_hid
 surface_kbd
 EOF
 
-KERNEL_SUFFIX=""
-QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
-
-/usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
-chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
+dracut --force --regenerate-all
 
 # Prevent kernel stuff from upgrading again
 dnf5 versionlock add kernel{,-core,-modules,-modules-core,-modules-extra,-tools,-tools-lib,-headers,-devel,-devel-matched}
