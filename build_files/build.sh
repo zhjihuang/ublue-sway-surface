@@ -83,7 +83,7 @@ tee /etc/containers/policy.json << EOF
 {
   "default": [
     {
-      "type": "insecureAcceptAnything"
+      "type": "reject"
     }
   ],
   "transports": {
@@ -91,7 +91,7 @@ tee /etc/containers/policy.json << EOF
       "ghcr.io/zhjihuang": [
         {
           "type": "sigstoreSigned",
-          "keyPath": "/etc/pki/containers/zhjihuang.pub",
+          "keyPath": "/etc/pki/containers/ghcr.io-zhjihuang.pub",
           "signedIdentity": {
             "type": "matchRepository"
           }
@@ -114,7 +114,7 @@ tee /etc/containers/policy.json << EOF
 }
 EOF
 
-tee /etc/containers/registries.d/zhjihuang.yaml << EOF
+tee /etc/containers/registries.d/ghcr.io-zhjihuang.yaml << EOF
 docker:
     ghcr.io/zhjihuang:
         use-sigstore-attachments: true
