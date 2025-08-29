@@ -3,7 +3,7 @@ FROM scratch AS ctx
 COPY build_files /
 
 # Base Image
-FROM quay.io/fedora/fedora-sway-atomic:42
+FROM quay.io/fedora/fedora-sway-atomic:41
 
 ## Other possible base images include:
 # FROM ghcr.io/ublue-os/bazzite:latest
