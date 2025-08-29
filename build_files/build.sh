@@ -79,7 +79,7 @@ chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
 # Prevent kernel stuff from upgrading again
 dnf5 versionlock add kernel{,-core,-modules,-modules-core,-modules-extra,-tools,-tools-lib,-headers,-devel,-devel-matched}
 
-tee /etc/containers/policy.json < EOF
+tee /etc/containers/policy.json << EOF
 {
   "default": [
     {
@@ -114,7 +114,7 @@ tee /etc/containers/policy.json < EOF
 }
 EOF
 
-tee /etc/containers/registries.d/zhjihuang.yaml < EOF
+tee /etc/containers/registries.d/zhjihuang.yaml << EOF
 docker:
     ghcr.io/zhjihuang:
         use-sigstore-attachments: true
