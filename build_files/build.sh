@@ -31,7 +31,7 @@ dnf5 config-manager \
     addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/linux-surface.repo
 
 # Install the Surface Linux kernel and related packages
-dnf5 -y install --allowerasing kernel-surface iptsd libwacom-surface kernel-surface-devel surface-secureboot surface-control
+dnf5 -y install --allowerasing kernel-surface iptsd libwacom-surface surface-secureboot surface-control
 
 # Remove the default Fedora kernel and related packages
 dnf5 -y remove kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
