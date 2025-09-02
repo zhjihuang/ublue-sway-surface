@@ -197,10 +197,6 @@ GENERAL_PACKAGES=(
     fuse
     fzf
     grub2-tools-extra
-    google-noto-sans-balinese-fonts
-    google-noto-sans-cjk-fonts
-    google-noto-sans-javanese-fonts
-    google-noto-sans-sundanese-fonts
     heif-pixbuf-loader
     htop
     intel-vaapi-driver
