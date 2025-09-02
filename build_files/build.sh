@@ -196,9 +196,11 @@ GENERAL_PACKAGES=(
     flatpak-spawn
     fuse
     fzf
+    google-noto-fonts-all-vf
     grub2-tools-extra
     heif-pixbuf-loader
     htop
+    ibm-plex-fonts-all
     intel-vaapi-driver
     just
     libavcodec
@@ -216,7 +218,6 @@ GENERAL_PACKAGES=(
     net-tools
     nvme-cli
     nvtop
-    google-noto-fonts-all-vf
     openrgb-udev-rules
     openssl
     oversteer-udev
