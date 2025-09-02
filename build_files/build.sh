@@ -216,6 +216,7 @@ GENERAL_PACKAGES=(
     net-tools
     nvme-cli
     nvtop
+    google-noto-fonts-all-vf
     openrgb-udev-rules
     openssl
     oversteer-udev
